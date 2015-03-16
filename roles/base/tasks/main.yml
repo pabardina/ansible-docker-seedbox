@@ -48,9 +48,6 @@
 
 - name: Create the application user
   user: name=download password=123456 state=present
-  
-- name: Chmod folder
-  shell: chmod -R 777 /home/download
 
 - name: Setup the Git repo
   git: repo=https://github.com/pabardina/docker-compose-seedbox dest=/home/download/docker-seedbox accept_hostkey=yes
@@ -66,6 +63,9 @@
 
 - name: Creates sickbeard config folder
   file: path=/home/download/sickbeard state=directory owner=download
+  
+- name: Chmod folder
+  shell: chmod -R 777 /home/download
 
 - name: Launch docker docker-compose
   shell: cd /home/download/docker-seedbox/ && docker-compose up -d
