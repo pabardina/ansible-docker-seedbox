@@ -52,11 +52,14 @@
 - name: Setup the Git repo
   git: repo=https://github.com/pabardina/docker-compose-seedbox dest=/home/download/docker-seedbox accept_hostkey=yes
 
-- name: Creates download torrent directory
-  file: path=/download/torrent state=directory owner=download
+- name: Creates downloaded torrent directory
+  file: path=/downloads/download state=directory owner=download
+  
+- name: Creates incomplete torrent directory
+  file: path=/downloads/incomplete state=directory owner=download
 
 - name: Creates download tv directory
-  file: path=/download/tv state=directory owner=download
+  file: path=/downloads/tv state=directory owner=download
 
 - name: Creates transmission config folder
   file: path=/home/download/transmission state=directory owner=download
@@ -68,7 +71,7 @@
   shell: chmod -R 777 /home/download
   
 - name: Chmod download's folder
-  shell: chmod -R 777 /download
+  shell: chmod -R 777 /downloads
 
 - name: Launch docker docker-compose
   shell: cd /home/download/docker-seedbox/ && docker-compose up -d
