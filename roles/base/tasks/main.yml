@@ -48,6 +48,9 @@
 
 - name: Create the application user
   user: name=download password=123456 state=present
+  
+- name: Chmod folder
+  shell: chmod -R 777 /home/download
 
 - name: Setup the Git repo
   git: repo=https://github.com/pabardina/docker-compose-seedbox dest=/home/download/docker-seedbox accept_hostkey=yes
