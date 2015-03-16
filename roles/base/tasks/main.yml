@@ -64,8 +64,11 @@
 - name: Creates sickbeard config folder
   file: path=/home/download/sickbeard state=directory owner=download
   
-- name: Chmod folder
+- name: Chmod user's folder
   shell: chmod -R 777 /home/download
+  
+- name: Chmod download's folder
+  shell: chmod -R 777 /download
 
 - name: Launch docker docker-compose
   shell: cd /home/download/docker-seedbox/ && docker-compose up -d
