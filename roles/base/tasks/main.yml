@@ -1,0 +1,69 @@
+---
+
+- name: Ensure bash, OpenSSl, and libssl are the latest versions
+  apt: name={{ item }} update_cache={{ update_apt_cache }} state=latest
+  with_items:
+    - bash
+    - openssl
+    - libssl-dev
+    - libssl-doc
+  tags: packages
+
+- name: Install base packages
+  apt: name={{ item }} update_cache={{ update_apt_cache }} force=yes state=installed
+  with_items:
+    - build-essential
+    - ntp
+    - htop
+    - git
+    - tig
+    - tmux
+    - ncdu
+    - python-dev
+    - python-pip
+    - python-pycurl
+  tags: packages
+
+- name: Install docker
+  shell: curl -sSL https://get.docker.com/ | sh 
+
+- name: Install docker-compose
+  shell: curl -L https://github.com/docker/compose/releases/download/1.1.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+
+- name: chmod docker-compose script
+  shell: chmod +x /usr/local/bin/docker-compose
+
+####################
+# Security
+#####################
+- name: Install Fail2ban
+  apt: name=fail2ban state=present
+
+- name: Start Fail2ban service
+  service: name=fail2ban state=started
+
+- name: Install virtualenv
+  pip: name=virtualenv
+  tags: packages
+
+- name: Create the application user
+  user: name=download password=123456 state=present
+
+- name: Setup the Git repo
+  git: repo=https://github.com/pabardina/docker-compose-seedbox dest=/home/download/docker-seedbox accept_hostkey=yes
+
+- name: Creates download torrent directory
+  file: path=/download/torrent state=directory owner=download
+
+- name: Creates download tv directory
+  file: path=/download/tv state=directory owner=download
+
+- name: Creates transmission config folder
+  file: path=/home/download/transmission state=directory owner=download
+
+- name: Creates sickbeard config folder
+  file: path=/home/download/sickbeard state=directory owner=download
+
+- name: Launch docker docker-compose
+  shell: cd /home/download/docker-seedbox/ && docker-compose up -d
+
